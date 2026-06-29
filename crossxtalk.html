@@ -46,7 +46,8 @@
     }
 
     html, body {
-      height: 100%; overflow: hidden;
+      height: 100%; height: -webkit-fill-available;
+      overflow: hidden;
       font-family: var(--font);
       background: #080808;
       color: var(--text);
@@ -388,31 +389,86 @@
     .dot.ab { animation:blinkFast .6s steps(1) infinite; }
     .out-note { font-size:8px; color:var(--text-dim); text-align:center; padding:3px 2px 0; }
 
-    /* RESPONSIVE */
-    @media (max-width:390px) {
-      .bpm-lcd { font-size:11px; padding:2px 5px; }
-      .jog { width:52px; height:52px; }
-      .jog .jog-inner { width:34px; height:34px; font-size:11px; }
-      .btn { font-size:10px; padding:3px 5px; min-width:26px; }
-      .btn-play { min-width:36px; }
+    /* RESPONSIVE — PHONE: single column, decks stacked */
+    @media (max-width:600px) {
+      #app { max-width:100%; border-left:none; border-right:none; }
+
+      /* Stack decks vertically — like CDJ left/right on a table,
+         but portrait phone means one above the other */
+      .decks-row { grid-template-columns:1fr; gap:7px; }
+
+      /* Each deck gets a horizontal compact layout:
+         waveform full width, controls in a tighter row */
+      .deck { padding:10px 12px 12px; }
+      .wf-wrap { height:38px; }
+
+      /* Jog slightly larger since there's more horizontal room */
+      .jog { width:60px; height:60px; }
+      .jog .jog-inner { width:40px; height:40px; font-size:14px; }
+
+      /* Deck controls row — space them better */
+      .dk-ctrl { gap:5px; }
+      .btn { font-size:11px; padding:5px 9px; min-width:34px; }
+      .btn-play { min-width:44px; }
+
+      /* BPM lcd — give it breathing room */
+      .bpm-lcd { font-size:12px; padding:3px 8px; }
+      .track-name { max-width:80px; font-size:9px; }
+
+      /* Hot cue pads bigger tap targets */
+      .cuebtn { min-width:30px; padding:4px 0; font-size:9px; }
+
+      /* FX: 2 columns on phone */
       .fx-grid { grid-template-columns:1fr 1fr; }
-      .itip { width:148px; font-size:9px; }
-      .wf-wrap { height:34px; }
-      .tempo-val { min-width:22px; font-size:8px; }
+
+      /* Info tips — don't overflow screen */
+      .itip { width:160px; font-size:9.5px; }
+
+      /* Tempo value label */
+      .tempo-val { min-width:28px; font-size:9px; }
+
+      /* Channel faders — more room */
+      .fader-val { min-width:20px; font-size:9px; }
+
+      /* Load buttons — taller tap target */
+      .load-btn { min-height:44px; font-size:11px; }
+
+      /* Status bar wrap nicely */
+      .status-bar { font-size:9px; }
     }
-    @media (max-height:680px) {
-      .jog { width:50px; height:50px; }
-      .jog .jog-inner { width:32px; height:32px; font-size:10px; }
-      .wf-wrap { height:32px; }
+
+    /* Very small phones */
+    @media (max-width:375px) {
+      .btn { font-size:10px; padding:4px 7px; min-width:30px; }
+      .btn-play { min-width:38px; }
+      .bpm-lcd { font-size:11px; padding:2px 6px; }
+      .jog { width:54px; height:54px; }
+      .jog .jog-inner { width:36px; height:36px; font-size:12px; }
     }
-    @media (min-width:521px) {
-      #app { max-width:700px; }
-      .jog { width:80px; height:80px; }
+
+    /* Short phones in landscape */
+    @media (max-height:500px) and (max-width:900px) {
+      /* Go side by side in landscape, compressed */
+      .decks-row { grid-template-columns:1fr 1fr; }
+      .wf-wrap { height:28px; }
+      .jog { width:44px; height:44px; }
+      .jog .jog-inner { width:28px; height:28px; font-size:10px; }
+      .deck { padding:6px 8px 8px; }
+    }
+
+    /* TABLET / IPAD: side by side with bigger controls */
+    @media (min-width:601px) {
+      #app { max-width:720px; }
+      .decks-row { grid-template-columns:1fr 1fr; gap:10px; }
+      .jog { width:78px; height:78px; }
       .jog .jog-inner { width:52px; height:52px; font-size:18px; }
-      .wf-wrap { height:54px; }
+      .wf-wrap { height:52px; }
       .bpm-lcd { font-size:14px; }
-      .btn { font-size:13px; padding:5px 9px; }
+      .btn { font-size:13px; padding:5px 10px; }
       .btn-play { min-width:50px; }
+      .cuebtn { min-width:28px; font-size:9px; }
+      .load-btn { min-height:44px; font-size:12px; }
+      .fx-grid { grid-template-columns:1fr 1fr 1fr 1fr; }
     }
   </style>
 </head>
