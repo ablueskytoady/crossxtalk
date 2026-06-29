@@ -131,27 +131,41 @@
     .tip strong { color:var(--text); display:block; margin-top:1px; }
     .tip .ti { font-size:15px; display:block; margin-bottom:2px; }
 
-    /* INFO TIPS */
-    .iw { position:relative; display:inline-flex; }
+    /* PER-CONTROL >< HELP TIPS */
+    .iw {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
     .ibtn {
-      width:14px; height:14px; border-radius:50%;
-      border:1px solid var(--ch-a); color:var(--ch-a);
-      background:transparent; font-size:8px; font-weight:700;
-      display:flex; align-items:center; justify-content:center;
-      cursor:pointer; font-family:var(--font); flex-shrink:0; transition:var(--tr);
+      background: none; border: none; cursor: pointer;
+      font-family: var(--mono); font-size: 10px; font-weight: 800;
+      color: var(--accent); padding: 0 2px;
+      letter-spacing: -1.5px; line-height: 1;
+      transition: var(--tr); flex-shrink: 0; opacity: 0.45;
     }
-    .ibtn.active { background:var(--ch-a); color:#000; box-shadow:0 0 10px rgba(0,200,255,.5); }
-    .ibtn:active { transform:scale(.88); }
+    .ibtn:active { transform: scale(.85); opacity: 1; }
+    .ibtn.active { opacity: 1; text-shadow: 0 0 8px var(--accent-glow); }
     .itip {
-      position:absolute; z-index:50; top:18px; left:0;
-      width:170px; background:var(--chassis-hi);
-      border:1px solid var(--ch-a); border-radius:var(--r-sm);
-      padding:8px 10px; font-size:9.5px; line-height:1.55;
-      color:var(--text); box-shadow:var(--shadow);
-      display:none; backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px);
+      position: absolute;
+      z-index: 100;
+      top: calc(100% + 4px);
+      left: 0;
+      width: 172px;
+      background: var(--chassis-hi);
+      border: 1px solid var(--accent);
+      border-radius: var(--r-sm);
+      padding: 8px 10px;
+      font-size: 10px; line-height: 1.6;
+      color: var(--text);
+      box-shadow: 0 6px 24px rgba(0,0,0,.95), 0 0 12px var(--accent-dim);
+      display: none;
+      pointer-events: none;
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
     }
-    .itip.show { display:block; }
-    .itip b { color:var(--ch-a); }
+    .itip.show { display: block; pointer-events: auto; }
+    .itip b { color: var(--accent); }
+    .itip.right { left: auto; right: 0; }
 
     /* DECKS ROW */
     .decks-row { display:grid; grid-template-columns:1fr 1fr; gap:7px; flex-shrink:0; }
@@ -161,6 +175,7 @@
       background:var(--chassis-mid);
       border-radius:var(--r); border:1px solid var(--border);
       padding:9px 9px 11px; position:relative; transition:border-color .2s;
+      overflow:hidden;   /* nothing inside the card bleeds out */
     }
     .deck.dkA { border-top:3px solid var(--ch-a); }
     .deck.dkB { border-top:3px solid var(--ch-b); }
@@ -246,13 +261,22 @@
     .jled.lit3{background:var(--ch-b);box-shadow:0 0 10px rgba(255,45,120,.5);animation:blink .5s steps(1) infinite .38s;}
 
     /* DECK CONTROLS */
-    .dk-ctrl { display:flex; align-items:center; gap:3px; flex-wrap:wrap; justify-content:center; margin-top:2px; }
+    .dk-ctrl {
+      display: grid;
+      grid-template-columns: auto auto auto auto 1fr auto;
+      align-items: center;
+      gap: 3px;
+      margin-top: 2px;
+      width: 100%;
+      overflow: hidden;
+    }
     .btn {
       background:var(--chassis-hi); border:1px solid var(--border);
       color:var(--text-dim); padding:4px 7px; border-radius:5px;
       font-size:11px; cursor:pointer; font-family:var(--font); font-weight:600;
       min-width:30px; display:flex; align-items:center; justify-content:center; gap:2px;
       transition:var(--tr); -webkit-appearance:none; appearance:none;
+      white-space:nowrap; flex-shrink:0;
     }
     .btn:active { transform:scale(.91); }
     .btn-play { background:var(--lcd-text); color:#000; border-color:var(--lcd-text); font-weight:800; min-width:40px; box-shadow:0 0 14px var(--lcd-glow); }
@@ -269,11 +293,13 @@
     .tempo-wrap {
       display:flex; align-items:center; gap:3px;
       background:var(--chassis); border:1px solid var(--border);
-      border-radius:5px; padding:2px 5px 2px 7px; flex:1; min-width:46px;
+      border-radius:5px; padding:2px 5px 2px 7px;
+      min-width:0; overflow:hidden;   /* grid child: fills the 1fr column, never overflows */
     }
     .tempo-icon { font-size:9px; color:var(--text-dim); font-weight:700; font-family:var(--mono); }
     input[type="range"] {
-      flex:1; height:3px; -webkit-appearance:none; appearance:none;
+      flex:1; min-width:0;   /* allows slider to shrink inside grid cell */
+      height:3px; -webkit-appearance:none; appearance:none;
       background:var(--border); border-radius:3px; outline:none; cursor:pointer;
     }
     input[type="range"]::-webkit-slider-thumb {
@@ -426,7 +452,6 @@
       .fx-grid { grid-template-columns:1fr 1fr; }
 
       /* Info tips — don't overflow screen */
-      .itip { width:160px; font-size:9.5px; }
 
       /* Tempo value label */
       .tempo-val { min-width:28px; font-size:9px; }
@@ -500,9 +525,7 @@
         <h4>🎯 DJ Quick Start</h4>
         <button class="learn-close" id="learnClose">✕</button>
       </div>
-      <p>Tap <b>i</b> next to any control for help. Load two tracks, match <b>BPM</b> with the tempo slider,
-        align beats with the <b>jog wheel</b>, then blend with the <b>crossfader</b>.
-        Use <b>PFL</b> to solo-monitor one deck.</p>
+      <p>Tap <b>&gt;&lt;</b> next to any control for a short explainer. Load two tracks, match <b>BPM</b> with the tempo slider, align beats with the <b>jog wheel</b>, then blend with the <b>crossfader</b>. Use <b>PFL</b> to solo-monitor one deck.</p>
       <div class="tips">
         <div class="tip"><span class="ti">🟢</span><strong>Green LCD</strong> = playing OK</div>
         <div class="tip"><span class="ti">🟠</span><strong>Orange</strong> = active control</div>
@@ -525,8 +548,7 @@
             <span class="beat" id="beatA"></span>
             <span class="bpm-num" id="bpmNumA">--</span>
             <span class="bpm-unit">BPM</span>
-            <span class="iw"><button class="ibtn" data-tip="bpm">i</button>
-              <div class="itip" data-tip="bpm"><b>Beatmatching:</b> align BPMs with the tempo slider. Red dot pulses per beat — watch both decks.</div></span>
+            <span class="iw"><button class="ibtn" data-tip="bpm">&gt;&lt;</button><div class="itip" data-tip="bpm"><b>Beatmatching:</b> align BPMs with the tempo slider. The red dot pulses once per beat — watch both decks to judge sync.</div></span>
           </div>
         </div>
         <div class="wf-wrap" id="wfA">
@@ -538,8 +560,7 @@
         <div class="vu-row">
           <span class="vu-lbl">LVL</span>
           <div class="vu-track"><div class="vu-fill" id="vuFA"></div><div class="vu-peak" id="vuPA"></div></div>
-          <span class="iw"><button class="ibtn" data-tip="vu">i</button>
-            <div class="itip" data-tip="vu"><b>Gain staging:</b> keep green. Yellow = hot; red = clipping. Use channel fader to tame.</div></span>
+          <span class="iw"><button class="ibtn" data-tip="vu">&gt;&lt;</button><div class="itip" data-tip="vu"><b>Gain staging:</b> keep green. Yellow = hot; red = clipping. Use the channel fader to tame.</div></span>
         </div>
         <div class="jog" id="jogA">
           <span class="jled tl" id="jlA0"></span><span class="jled tr" id="jlA1"></span>
@@ -557,16 +578,14 @@
             <span class="tempo-icon">+</span>
             <span class="tempo-val" id="tvA">±0%</span>
           </div>
-          <span class="iw"><button class="ibtn" data-tip="tempo">i</button>
-            <div class="itip" data-tip="tempo"><b>Tempo:</b> speeds/slows playback. Use jog wheel for fine nudges while syncing.</div></span>
+          <span class="iw"><button class="ibtn" data-tip="tempo">&gt;&lt;</button><div class="itip" data-tip="tempo"><b>Tempo:</b> speeds up or slows down playback. Use the jog wheel for fine nudges while syncing.</div></span>
         </div>
         <div class="cue-row" id="crA">
           <button class="cuebtn" data-deck="A" data-cue="0">1<span class="cdot">○</span></button>
           <button class="cuebtn" data-deck="A" data-cue="1">2<span class="cdot">○</span></button>
           <button class="cuebtn" data-deck="A" data-cue="2">3<span class="cdot">○</span></button>
           <button class="cuebtn" data-deck="A" data-cue="3">4<span class="cdot">○</span></button>
-          <span class="iw"><button class="ibtn" data-tip="cue">i</button>
-            <div class="itip" data-tip="cue" style="left:-120px"><b>Hot cues:</b> tap empty pad to save position; tap lit pad to jump to it.</div></span>
+          <span class="iw"><button class="ibtn" data-tip="cue">&gt;&lt;</button><div class="itip right" data-tip="cue"><b>Hot cues:</b> tap an empty pad to save position; tap a lit pad to jump back instantly.</div></span>
         </div>
         <div class="sp-row">
           <div class="sync-ind" id="siA">🔗 <div class="sync-bar"><div class="sync-fill" id="sfA"></div></div> <span id="spA">0%</span></div>
@@ -586,8 +605,7 @@
             <span class="beat" id="beatB"></span>
             <span class="bpm-num" id="bpmNumB">--</span>
             <span class="bpm-unit">BPM</span>
-            <span class="iw"><button class="ibtn" data-tip="bpmB">i</button>
-              <div class="itip" data-tip="bpmB"><b>Beatmatching:</b> align BPMs with the tempo slider. Red dot pulses per beat.</div></span>
+            <span class="iw"><button class="ibtn" data-tip="bpmB">&gt;&lt;</button><div class="itip right" data-tip="bpmB"><b>Beatmatching:</b> align BPMs with the tempo slider. The red dot pulses once per beat — watch both decks.</div></span>
           </div>
         </div>
         <div class="wf-wrap" id="wfB">
@@ -599,8 +617,7 @@
         <div class="vu-row">
           <span class="vu-lbl">LVL</span>
           <div class="vu-track"><div class="vu-fill" id="vuFB"></div><div class="vu-peak" id="vuPB"></div></div>
-          <span class="iw"><button class="ibtn" data-tip="vuB">i</button>
-            <div class="itip" data-tip="vuB"><b>Gain staging:</b> keep green. Yellow = hot; red = clipping.</div></span>
+          <span class="iw"><button class="ibtn" data-tip="vuB">&gt;&lt;</button><div class="itip right" data-tip="vuB"><b>Gain staging:</b> keep green. Yellow = hot; red = clipping.</div></span>
         </div>
         <div class="jog" id="jogB">
           <span class="jled tl" id="jlB0"></span><span class="jled tr" id="jlB1"></span>
@@ -618,16 +635,14 @@
             <span class="tempo-icon">+</span>
             <span class="tempo-val" id="tvB">±0%</span>
           </div>
-          <span class="iw"><button class="ibtn" data-tip="tempoB">i</button>
-            <div class="itip" data-tip="tempoB"><b>Tempo:</b> speeds/slows playback. Use jog wheel for fine nudges.</div></span>
+          <span class="iw"><button class="ibtn" data-tip="tempoB">&gt;&lt;</button><div class="itip right" data-tip="tempoB"><b>Tempo:</b> speeds up or slows down playback. Use the jog wheel for fine nudges.</div></span>
         </div>
         <div class="cue-row" id="crB">
           <button class="cuebtn" data-deck="B" data-cue="0">1<span class="cdot">○</span></button>
           <button class="cuebtn" data-deck="B" data-cue="1">2<span class="cdot">○</span></button>
           <button class="cuebtn" data-deck="B" data-cue="2">3<span class="cdot">○</span></button>
           <button class="cuebtn" data-deck="B" data-cue="3">4<span class="cdot">○</span></button>
-          <span class="iw"><button class="ibtn" data-tip="cueB">i</button>
-            <div class="itip" data-tip="cueB" style="left:-120px"><b>Hot cues:</b> tap empty pad to save position; tap lit pad to jump.</div></span>
+          <span class="iw"><button class="ibtn" data-tip="cueB">&gt;&lt;</button><div class="itip right" data-tip="cueB"><b>Hot cues:</b> tap an empty pad to save position; tap a lit pad to jump back instantly.</div></span>
         </div>
         <div class="sp-row">
           <div class="sync-ind" id="siB">🔗 <div class="sync-bar"><div class="sync-fill" id="sfB"></div></div> <span id="spB">0%</span></div>
@@ -654,8 +669,7 @@
           <input type="range" id="cfB" min="0" max="1" step="0.01" value="1">
           <span class="fader-val" id="cvB2">100</span>
         </div>
-        <span class="iw"><button class="ibtn" data-tip="chan">i</button>
-          <div class="itip" data-tip="chan" style="left:-140px"><b>Channel faders:</b> individual deck volumes. Set both even, then crossfader blends.</div></span>
+        <span class="iw"><button class="ibtn" data-tip="chan">&gt;&lt;</button><div class="itip right" data-tip="chan"><b>Channel faders:</b> individual deck volumes. Set both equal, then use the crossfader to blend between decks.</div></span>
       </div>
       <div class="xfader" id="xfWrap">
         <div class="xf-track"></div>
@@ -666,16 +680,14 @@
         </div>
       </div>
       <div style="text-align:center;margin-top:3px;">
-        <span class="iw"><button class="ibtn" data-tip="xf">i</button>
-          <div class="itip" data-tip="xf" style="left:50%;transform:translateX(-50%)"><b>Crossfader:</b> slide toward B while A plays to blend. Match tempo first for clean transitions.</div></span>
+        <span class="iw"><button class="ibtn" data-tip="xf">&gt;&lt;</button><div class="itip" data-tip="xf"><b>Crossfader:</b> slide toward B while A plays to blend. Match tempo first for clean transitions.</div></span>
       </div>
     </div>
 
     <!-- EFFECTS -->
     <div class="fx-section">
       <div class="fx-head">🎛 FX
-        <span class="iw"><button class="ibtn" data-tip="fx">i</button>
-          <div class="itip" data-tip="fx"><b>Filter</b> sweeps highs/lows for tension. <b>Echo</b> trails the tail on the last beat before a cut.</div></span>
+        <span class="iw"><button class="ibtn" data-tip="fx">&gt;&lt;</button><div class="itip" data-tip="fx"><b>Filter</b> sweeps highs/lows for tension. <b>Echo</b> trails the tail — good on the last beat before a cut.</div></span>
       </div>
       <div class="fx-grid">
         <div class="fx-cell">
@@ -1239,13 +1251,13 @@
     document.querySelectorAll('.ibtn').forEach(btn=>{
       btn.onclick=e=>{
         e.stopPropagation();
-        const key=btn.dataset.tip;
-        document.querySelectorAll('.itip').forEach(t=>{if(t.dataset.tip!==key)t.classList.remove('show');});
-        document.querySelectorAll('.ibtn').forEach(b=>{if(b!==btn)b.classList.remove('active');});
-        const tip=document.querySelector(`.itip[data-tip="${key}"]`);
+        const tip=btn.parentElement.querySelector('.itip');
         if (!tip) return;
         const show=!tip.classList.contains('show');
-        tip.classList.toggle('show',show); btn.classList.toggle('active',show);
+        document.querySelectorAll('.itip').forEach(t=>t.classList.remove('show'));
+        document.querySelectorAll('.ibtn').forEach(b=>b.classList.remove('active'));
+        tip.classList.toggle('show',show);
+        btn.classList.toggle('active',show);
       };
     });
     document.addEventListener('click',()=>{
@@ -1316,6 +1328,55 @@
 
     $('cfA').addEventListener('input',updateXF);
     $('cfB').addEventListener('input',updateXF);
+
+    /* ── DOUBLE-TAP / DBLCLICK TO RESET ANY SLIDER ──────────────────
+       Each slider gets its OWN lastTap timestamp (closure variable),
+       so tapping one never accidentally resets another.
+       Filter resets to 0.5 (centre sweep), Echo to 0 (off),
+       Tempo to 1.0 (±0%), Channel faders to 1.0 (full), XF to 0.5. */
+    function makeDoubleTapReset(el, defaultVal, onReset) {
+      let lastTap = 0;
+
+      el.addEventListener('dblclick', e => {
+        e.preventDefault();
+        el.value = defaultVal;
+        onReset(defaultVal);
+      });
+
+      el.addEventListener('touchend', e => {
+        const now = Date.now();
+        if (now - lastTap < 260 && now - lastTap > 30) {
+          e.preventDefault();
+          el.value = defaultVal;
+          onReset(defaultVal);
+        }
+        lastTap = now;
+      }, { passive: false });
+    }
+
+    makeDoubleTapReset($('tempoA'), 1.0, v => setTempo('A', v));
+    makeDoubleTapReset($('tempoB'), 1.0, v => setTempo('B', v));
+    makeDoubleTapReset($('cfA'),    1.0, v => { updateXF(); });
+    makeDoubleTapReset($('cfB'),    1.0, v => { updateXF(); });
+    makeDoubleTapReset($('filtA'),  0.5, v => applyFx('A', 'filter', v));
+    makeDoubleTapReset($('filtB'),  0.5, v => applyFx('B', 'filter', v));
+    makeDoubleTapReset($('echoA'),  0.0, v => applyFx('A', 'echo',   v));
+    makeDoubleTapReset($('echoB'),  0.0, v => applyFx('B', 'echo',   v));
+
+    /* Crossfader: double-tap its track → centre */
+    let xfLastTap = 0;
+    xfWrap.addEventListener('touchend', e => {
+      const now = Date.now();
+      if (now - xfLastTap < 260 && now - xfLastTap > 30) {
+        xPos = 0.5;
+        updateXF();
+      }
+      xfLastTap = now;
+    });
+    xfWrap.addEventListener('dblclick', () => { xPos = 0.5; updateXF(); });
+
+    
+
 
     $('filtA').addEventListener('input',()=>applyFx('A','filter',parseFloat($('filtA').value)));
     $('filtB').addEventListener('input',()=>applyFx('B','filter',parseFloat($('filtB').value)));
